@@ -1,0 +1,93 @@
+# ==========================================
+# C / C++ Compilation & Build Artifacts
+# ==========================================
+*.o
+*.obj
+*.so
+*.so.*
+*.a
+*.lib
+*.dll
+*.dylib
+*.exe
+*.out
+*.app
+
+# Precompiled Headers & Modules
+*.gch
+*.pch
+*.ifc
+*.smi
+
+# Debug Symbols & Profiling
+*.pdb
+*.idb
+*.ilk
+*.dSYM/
+*.gcda
+*.gcno
+*.gcov
+
+# ==========================================
+# CMake Build Directories & Cache
+# ==========================================
+# Ignore common build directory names
+build/
+build-*/
+cmake-build-*/
+bin/
+lib/
+
+# CMake temporary files if configured in-source
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# ==========================================
+# IDE & Code Editor Directories
+# ==========================================
+# Visual Studio / MSVC
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# CLion / JetBrains
+.idea/
+cmake-build-debug/
+cmake-build-release/
+
+# Xcode
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+
+# ==========================================
+# Dependency Managers / Third-Party Libraries
+# ==========================================
+# vcpkg & Conan local directories
+vcpkg_installed/
+.conan/
+
+# Glad / GLFW build artifacts (if fetched or built locally)
+# (Keep source code if vendors are committed manually, otherwise ignore)
+
+# ==========================================
+# OS & System-Specific Files
+# ==========================================
+.DS_Store
+Thumbs.db
+desktop.ini
