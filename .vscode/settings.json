@@ -1,0 +1,69 @@
+{
+    // ------------------------------------------------------------------------------
+    // Header configuration
+    // ------------------------------------------------------------------------------
+    "psi-header.config": {
+        "forceToTop": true,
+    },
+    "psi-header.lang-config": [
+        {
+            "language": "cmake",
+            "begin": "",
+            "end": "",
+            "prefix": "# ",
+        },
+        {
+            "language": "cpp",
+            "begin": "",
+            "end": "",
+            "prefix": "// ",
+        }
+    ],
+    "psi-header.templates": [
+        {
+            "language": "*",
+            "template": [
+                "################################################################################",
+                "Common Framework for Computer Graphics Courses at FI MUNI.",
+                "",
+                "Copyright (c) Visitlab (https://visitlab.fi.muni.cz)",
+                "All rights reserved.",
+                "################################################################################",
+            ]
+        }
+    ],
+    "psi-header.changes-tracking": {
+        "isActive": true,
+        "autoHeader": "autoSave",
+        "enforceHeader": true,
+        "excludeGlob": [
+            "**/settings.json",
+            "**/*.manifest",
+            "**/.clang-format",
+            "**/*.csv"
+        ],
+        "exclude": [
+            "jsonc",
+            "json",
+            "csv"
+        ]
+    },
+    // ------------------------------------------------------------------------------
+    // Formatting configuration
+    // ------------------------------------------------------------------------------
+    "editor.formatOnSave": true,
+    "[cpp]": {
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
+    "clang-format.executable": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/Llvm/bin/clang-format.exe",
+    // ------------------------------------------------------------------------------
+    // VCPKG configuration
+    // ------------------------------------------------------------------------------
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/ext/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_FEATURE_FLAGS": "versions"
+    },
+    // ------------------------------------------------------------------------------
+    // ANYTHING BELOW THIS LINE IS NOT PART OF THE DEFAULT CONFIGURATION
+    // ------------------------------------------------------------------------------
+}
