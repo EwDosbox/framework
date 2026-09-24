@@ -27,7 +27,7 @@ void Application::render() {
     // Task 1.4: Set the clear color - you can use either hard-coded values or use variables 'red', 'green', 'blue'.
     // Task 1.4: Clear the window.
     glClearColor(red, green, blue, alpha);
-    glClear(GL_COLOR_BUFFER_BIT | GL_LINE);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Application::render_ui() {
