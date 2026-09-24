@@ -16,7 +16,11 @@ class Application : public PV112Application {
     // ----------------------------------------------------------------------------
 private:
     GLuint vao = 0;
-    GLuint program = 0;
+    GLuint main_program = 0;
+    GLuint side_program = 0;
+
+    GLuint l_program = 0;
+    GLuint r_program = 0;
 
     /** Integer containing number of currently selected option of the radio button */
     int ui_reverse_sides = 0;
