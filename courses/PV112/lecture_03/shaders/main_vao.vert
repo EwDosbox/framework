@@ -8,6 +8,8 @@ layout(location = 0) in vec3 position;
 // The color of the current vertex that is being processed.
 layout(location = 1) in vec3 color;
 
+layout(location = 0) out vec4 out_color;
+
 // ----------------------------------------------------------------------------
 // Output Variables
 // ----------------------------------------------------------------------------
@@ -21,4 +23,5 @@ void main()
 {
     // Task 3.8: Output color to fragment shader (set the output value).
     gl_Position = vec4(position, 1.0);
+    out_color = vec4(color, 1.0);
 }

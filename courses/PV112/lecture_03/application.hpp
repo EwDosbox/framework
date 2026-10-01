@@ -19,6 +19,11 @@ private:
     GLuint program_triangle = 0;
     GLuint program_vao = 0;
 
+    GLuint program_square = 0;
+    GLuint program_strip = 0;
+
+    GLuint diamond_vao = 0;
+
     int ui_chosen_program = 0;
 
     // ----------------------------------------------------------------------------
