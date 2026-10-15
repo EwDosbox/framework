@@ -23,6 +23,9 @@ private:
     GLuint program_strip = 0;
 
     GLuint diamond_vao = 0;
+    GLuint square_vao = 0;
+    GLuint triangle_vao = 0;
+    GLuint indexed_vao = 0;
 
     int ui_chosen_program = 0;
 

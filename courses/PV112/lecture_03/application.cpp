@@ -17,6 +17,7 @@ Application::Application(int initial_width, int initial_height, std::vector<std:
     glCreateVertexArrays(1, &vao_empty);
 
     // Task 3.3: Create Vertex Buffer Objects (VBO). Copy vertex data found in data.hpp to VBOs.
+    #pragma region Diamond
     GLuint diamond_position_vbo;
     glCreateBuffers(1, &diamond_position_vbo);
     glNamedBufferStorage(diamond_position_vbo, 36 * sizeof(float), diamond_positions, 0);
@@ -37,6 +38,78 @@ Application::Application(int initial_width, int initial_height, std::vector<std:
 
     glVertexArrayAttribBinding(diamond_vao, 0, 0);
     glVertexArrayAttribBinding(diamond_vao, 1, 1);
+
+    #pragma endregion 
+    #pragma region Square
+
+    GLuint square_vbo;
+    glCreateBuffers(1, &square_vbo);
+    glNamedBufferStorage(square_vbo, 36 * sizeof(float), square_data, 0);
+
+    glCreateVertexArrays(1, &square_vao);
+    glVertexArrayVertexBuffer(square_vao, 0, square_vbo, 0, 3 * sizeof(float)); //position in main_vao.vert
+    glVertexArrayVertexBuffer(square_vao, 1, square_vbo, 18 * sizeof(float), 3 * sizeof(float)); //color in main_vao.vert
+
+    glEnableVertexArrayAttrib(square_vao, 0);
+    glEnableVertexArrayAttrib(square_vao, 1);
+
+    glVertexArrayAttribFormat(square_vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(square_vao, 1, 3, GL_FLOAT, GL_FALSE, 0);
+
+    glVertexArrayAttribBinding(square_vao, 0, 0);
+    glVertexArrayAttribBinding(square_vao, 1, 1);
+
+    #pragma endregion
+    #pragma region Triangle
+
+    GLuint triangle_vbo;
+    glCreateBuffers(1, &triangle_vbo);
+    glNamedBufferStorage(triangle_vbo, 3 * sizeof(Vertex), triangle_vertices, 0);
+
+    glCreateVertexArrays(1, &triangle_vao);
+    glVertexArrayVertexBuffer(triangle_vao, 0, triangle_vbo, 0, sizeof(Vertex)); //position in main_vao.vert
+    glVertexArrayVertexBuffer(triangle_vao, 1, triangle_vbo, 0, sizeof(Vertex)); //color in main_vao.vert
+
+    glEnableVertexArrayAttrib(triangle_vao, 0);
+    glEnableVertexArrayAttrib(triangle_vao, 1);
+
+    glVertexArrayAttribFormat(triangle_vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(triangle_vao, 1, 3, GL_UNSIGNED_BYTE, GL_TRUE, 3 * sizeof(float));
+    
+    glVertexArrayAttribBinding(triangle_vao, 0, 0);
+    glVertexArrayAttribBinding(triangle_vao, 1, 1);
+
+    #pragma endregion
+    #pragma region Indexed
+
+    GLuint indexed_indices_vbo;
+    glCreateBuffers(1, &indexed_indices_vbo);
+    glNamedBufferStorage(indexed_indices_vbo, 12 * sizeof(GL_UNSIGNED_BYTE), diamond_indices, 0);
+
+    GLuint indexed_positions_vbo;
+    glCreateBuffers(1, &indexed_positions_vbo);
+    glNamedBufferStorage(indexed_positions_vbo, 15 * sizeof(float), diamond_positions_indexed, 0);
+
+    GLuint indexed_colors_vbo;
+    glCreateBuffers(1, &indexed_colors_vbo);
+    glNamedBufferStorage(indexed_colors_vbo, 15 * sizeof(float), diamond_colors_indexed, 0);
+
+    glCreateVertexArrays(1, &indexed_vao);
+    glVertexArrayVertexBuffer(indexed_vao, 0, indexed_positions_vbo, 0, 3 * sizeof(float)); //position in main_vao.vert
+    glVertexArrayVertexBuffer(indexed_vao, 1, indexed_colors_vbo, 0, 3 * sizeof(float)); //color in main_vao.vert
+
+    glEnableVertexArrayAttrib(indexed_vao, 0);
+    glEnableVertexArrayAttrib(indexed_vao, 1);
+
+    glVertexArrayAttribFormat(indexed_vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(indexed_vao, 1, 3, GL_FLOAT, GL_FALSE, 0);
+    
+    glVertexArrayAttribBinding(indexed_vao, 0, 0);
+    glVertexArrayAttribBinding(indexed_vao, 1, 1);
+
+    glVertexArrayElementBuffer(indexed_vao, indexed_indices_vbo);
+
+    #pragma endregion
 
     // Task 3.4-3.6: Create Vertex Array Objects (VAO) fetching data from VBOs.
 
@@ -114,6 +187,15 @@ void Application::render() {
         glUseProgram(program_vao);
 
         glDrawArrays(GL_TRIANGLES, 0, 12);
+
+        glBindVertexArray(square_vao);
+        glDrawArrays(GL_TRIANGLES, 0, 12);
+
+        glBindVertexArray(triangle_vao);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glBindVertexArray(indexed_vao);
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
         break;
     }
     }
