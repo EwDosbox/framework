@@ -135,62 +135,66 @@ void Application::render() {
     glViewport(0, 0, width, height);
     glUseProgram(program);
 
-    // Task 4.3: Enable multisampling on OpenGl side using glEnable.
-    // ...
+    // Task 4.3: Enable multisamspling on OpenGl side using glEnable.
+    glEnable(GL_MULTISAMPLE);
 
     // Task 4.1: Change polygon mode
     switch (ui_polygon_mode) {
     case 0:
         // Point
-        // ...
+        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
         break;
     case 1:
         // Line
-        // ...
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         break;
     case 2:
         // Fill
-        // ...
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         break;
     }
 
     // Task 4.2: Modify the glClear call to clear the depth buffer as well.
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Task 4.2: Enable the depth test using glEnable function.
     if (ui_depth) {
-       // ...
+        glEnable(GL_DEPTH_TEST);
     } else {
         // Disable
-        // ...
+        glDisable(GL_DEPTH_TEST);
     }
 
     // Task 4.4 : Enable blending.
     if (ui_blending) {
-        // ...
+        glEnable(GL_BLEND);
     } else {
         // Disable
-        // ...
+        glDisable(GL_BLEND);
     }
 
     // Task 4.5: Enable culling.
     if (ui_face_cull > 0) {
        // Enable
+        glEnable(GL_CULL_FACE);
 
         switch (ui_face_cull) {
         case 1:
             // Back
+            glCullFace(GL_BACK);
             break;
         case 2:
             // Front
+            glCullFace(GL_FRONT);
             break;
         case 3:
             // Both
+            glCullFace(GL_FRONT_AND_BACK);
             break;
         }
     } else {
         // Disable
-        // ...
+        glDisable(GL_CULL_FACE);
     }
 
     glBindVertexArray(diamond_vao);
@@ -204,11 +208,10 @@ void Application::render() {
 
     if (ui_blending) {
         // Task 4.4 : Enable blending and try out different configurations of blend equation.
-        // ...
-        // ...
+        glBlendFunc(GL_ONE, GL_ZERO);
+        glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
 
         // Note that we disable the test before rendering the indexed diamond to avoid problems with blending.
-        // ...
     }
 
     glBindVertexArray(diamond_indexed_vao);

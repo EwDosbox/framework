@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
     // Task 4.3: Change the amount of the samples that will be used when multisampling is enabled.
     // Note that the custom method below internally changes the amount of samples by calling glfwWindowHint(GLFW_SAMPLES, samples_per_pixel);
     // when the windows is created.
-    manager.set_multisampling_per_pixel(1);
+    manager.set_multisampling_per_pixel(10);
 
     manager.init(initial_width, initial_height, "PV112 Lecture #04", 4, 5);
     if (!manager.is_fail()) {
