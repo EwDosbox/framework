@@ -24,6 +24,11 @@ layout(location = 1) out vec3 fs_normal;
 // The texture coordinates forwarded to fragment shader.
 layout(location = 2) out vec2 fs_texture_coordinate;
 
+layout(location = 1) uniform mat4 model;
+layout(location = 2) uniform mat4 projection;
+layout(location = 3) uniform mat4 view;
+//layout(location = 4) uniform mat3 normal_matrix;
+
 // ----------------------------------------------------------------------------
 // Main Method
 // ----------------------------------------------------------------------------
@@ -36,5 +41,5 @@ void main()
 	fs_texture_coordinate = texture_coordinate;
 
 	// Task 5.1: Multiply position by MVP matrices in correct order
-    gl_Position = vec4(position, 1.0);
+    gl_Position = projection * view * model * vec4(position, 1.0);
 }

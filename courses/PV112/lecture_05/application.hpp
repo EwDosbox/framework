@@ -24,6 +24,8 @@ private:
     Sphere sphere{};
     Teapot teapot{};
 
+    glm::vec3 trans = glm::vec3(0);
+
     float light = 0.0f;
 
     // ----------------------------------------------------------------------------

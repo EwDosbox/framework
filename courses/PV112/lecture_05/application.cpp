@@ -64,21 +64,53 @@ void Application::render() {
     //           4. Leave model matrix as identity for now.
     // Task 5.1: Upload MVP matrices to 'program' - use glm::value_ptr to get pointers for your matrices.
 
+
+    glm::mat4 view = glm::lookAt(glm::vec3(1.5f,2.0f,-8.0f), glm::vec3(0), glm::vec3(0,1,0));
+    glm::mat4 proj = glm::perspective(glm::radians(45.f), (float)width/(float)height, 0.01f, 100.f);
+    
+    glProgramUniformMatrix4fv(main_program, 2, 1, GL_FALSE, glm::value_ptr(proj));
+    glProgramUniformMatrix4fv(main_program, 3, 1, GL_FALSE, glm::value_ptr(view));
+
     // Task 5.2: Set uniform data for light and upload camera(eye) position to 'program'.
     // Task 5.2: Set uniform data for material. Remember: it's ambient, diffuse, specular, and additionally shininess for material.
 
     glUseProgram(main_program);
 
+
     // Task 5.1: Separate each object by moving them to different locations using glm::translate(glm::mat4 matrix_to_translate, glm::vec3).
     //           Play with other glm functions of the same form:
     //            - rotate (mat4x4 matrix_to_rotate, float angle, glm::vec3 axis_to_rotate_around)
     //            - translate (mat4x4 matrix_to_translate, glm::vec3 move_by_vector)
+
+    //GLint color_location = glGetUniformLocation(main_program, "color");
+
+    glm::mat4 model = glm::translate(glm::mat4(1.0),trans);
+    glProgramUniformMatrix4fv(main_program, 1, 1, GL_FALSE, glm::value_ptr(model));
+    glProgramUniform3f(main_program, 0, 1.0, 1.0,0);
     cube.draw();
+
+    model = glm::translate(glm::mat4(1.0), glm::vec3(0.5, 0.3, 0.1));
+    glProgramUniformMatrix4fv(main_program, 1, 1, GL_FALSE, glm::value_ptr(model));
+    glProgramUniform3f(main_program, 0, 0, 1.0, 1.0);
     sphere.draw();
+
+    model = glm::translate(glm::mat4(1.0), glm::vec3(0.5, 0.6, 0.1));
+    glProgramUniformMatrix4fv(main_program, 1, 1, GL_FALSE, glm::value_ptr(model));
+    glProgramUniform3f(main_program, 0, 1.0, 0, 1.0);
     teapot.draw();
 }
 
-void Application::render_ui() { const float unit = ImGui::GetFontSize(); }
+void Application::render_ui() {
+    const float unit = ImGui::GetFontSize();
+    
+    ImGui::Begin("Menu");
+
+    ImGui::SliderFloat("X: ", &trans.x, -10.f, 10.f, "%.05f");
+    ImGui::SliderFloat("Y: ", &trans.y, -10.f, 10.f, "%.05f");
+    ImGui::SliderFloat("Z: ", &trans.z, -10.f, 10.f, "%.05f");
+
+    ImGui::End();
+}
 
 // ----------------------------------------------------------------------------
 // Input Events
