@@ -1,5 +1,5 @@
 {
-  description = "Universal Dev Environment Flake";
+  description = "C++ Framework Dev Environment";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
@@ -13,12 +13,45 @@
     pkgs = nixpkgs.legacyPackages.${system};
   in {
     devShells.${system}.default = pkgs.mkShell {
-      buildInputs = with pkgs; [
+      nativeBuildInputs = with pkgs; [
         cmake
+        ninja
+        pkg-config
+        git
+      ];
+
+      buildInputs = with pkgs; [
+        gcc
+        gnutar
+        curl
+        zip
+        unzip
+        mesa
+        libGL
+        libx11
+        libxcursor
+        libxinerama
+        libxi
+        libxrandr
+        libxext
+        libxfixes
       ];
 
       shellHook = ''
-        echo "Dev Shell"
+        export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
+          pkgs.stdenv.cc.cc.lib
+          pkgs.mesa
+          pkgs.libGL
+          pkgs.libx11
+          pkgs.libxcursor
+          pkgs.libxinerama
+          pkgs.libxi
+          pkgs.libxrandr
+          pkgs.libxext
+          pkgs.libxfixes
+        ]}:$LD_LIBRARY_PATH"
+
+          echo "C++ Dev Shell Loaded Successfully"
       '';
     };
   };
