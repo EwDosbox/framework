@@ -91,3 +91,5 @@ vcpkg_installed/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+/.direnv
