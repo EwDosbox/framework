@@ -35,11 +35,12 @@ layout(location = 3) uniform mat4 view;
 void main()
 {
 	// Task 5.1 Transform position to world space when you obtain model matrix.
-	fs_position = position;
+	fs_position = vec3(model * vec4(position, 1.0));
+	fs_normal = mat3(transpose(inverse(model))) * normal;
 	// Task 5.1 Uncomment when you obtain model matrix.
 	// fs_normal = transpose(inverse(mat3(model))) * normal;
 	fs_texture_coordinate = texture_coordinate;
 
 	// Task 5.1: Multiply position by MVP matrices in correct order
-    gl_Position = projection * view * model * vec4(position, 1.0);
+	gl_Position = projection * view * model * vec4(position, 1.0);
 }

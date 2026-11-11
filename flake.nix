@@ -35,6 +35,8 @@
         libxrandr
         libxext
         libxfixes
+
+        renderdoc
       ];
 
       shellHook = ''
