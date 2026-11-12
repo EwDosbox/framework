@@ -28,6 +28,7 @@ layout(location = 2) in vec2 fs_texture_coordinate;
 
 // Task 6.2: Add a sampler binding for texture.
 //           layout(binding = NUMBER) uniform sampler2D NAME;
+layout(binding = 0) uniform sampler2D diffuse_texture;
 
 // ----------------------------------------------------------------------------
 // Output Variables
@@ -43,6 +44,7 @@ void main()
 {
 	// Task 6.2: Fetch color from diffuse texture using fs_texture_coordinate and set it as the final color.
 	//           The function is: texture(sampler, texture_coordinate) and returns vec4
+	vec4 texture_color = texture(diffuse_texture, fs_texture_coordinate);
 
 	vec3 light_vector = light_position.xyz - fs_position * light_position.w;
 	vec3 L = normalize(light_vector);
@@ -61,5 +63,6 @@ void main()
 	vec3 material_color = material_ambient + NdotL * material_diffuse + pow(NdotH, material_shininess) * material_specular;
 
 	float distance2 = light_position.w == 1.0 ? pow(length(light_vector), 2) : 1.0;
-	final_color = vec4(material_color / distance2, 1.0);
+	
+	final_color = texture_color + vec4(material_color / distance2, 1.0); 
 }

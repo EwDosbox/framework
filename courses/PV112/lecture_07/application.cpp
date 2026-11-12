@@ -67,10 +67,12 @@ Application::Application(int initial_width, int initial_height, std::vector<std:
     // Task 7.1: Create Framebuffer
     // --------------------------------------------------------------------------
     // Create framebuffers (glCreateFramebuffers)
-    // ...
 
+    //glCreateFramebuffers(1);
+    
     // Initialize color output texture with GL_RGBA32F format (glCreateTextures, glTextureStorage2D)
-    // ...
+
+    //glCreateTextures()
 
     // Initialize depth output texture with GL_DEPTH_COMPONENT32F format
     // ...
