@@ -38,5 +38,5 @@ void main()
 	fs_normal = transpose(inverse(mat3(model))) * normal;
 	fs_texture_coordinate = texture_coordinate;
 
-    gl_Position = projection * view * model * vec4(position, 1.0);
+	gl_Position = projection * view * model * vec4(position, 1.0);
 }

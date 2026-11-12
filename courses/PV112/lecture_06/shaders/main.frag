@@ -55,14 +55,18 @@ void main()
 	float NdotL = max(dot(N, L), 0.0);
 	float NdotH = max(dot(N, H), 0.0);
 
-	vec3 material_ambient = material_ambient_color * light_ambient_color;
 	// Task 6.3: Multiply the material diffuse color by the color obtained from the diffuse texture.
-	vec3 material_diffuse = material_diffuse_color * light_diffuse_color;
-	vec3 material_specular = material_specular_color * light_specular_color;
 
-	vec3 material_color = material_ambient + NdotL * material_diffuse + pow(NdotH, material_shininess) * material_specular;
+	vec3 surface_diffuse = material_diffuse_color * texture_color.rgb;
+	vec3 surface_ambient = material_ambient_color * texture_color.rgb;
 
-	float distance2 = light_position.w == 1.0 ? pow(length(light_vector), 2) : 1.0;
-	
-	final_color = texture_color + vec4(material_color / distance2, 1.0); 
+	vec3 material_ambient = surface_ambient * light_ambient_color;
+	vec3 material_diffuse = surface_diffuse * light_diffuse_color * NdotL;
+	vec3 material_specular = material_specular_color * light_specular_color * pow(NdotH, material_shininess);
+
+	float distance2 = light_position.w == 1.0 ? dot(light_vector, light_vector) : 1.0;
+
+	vec3 material_color = material_ambient + (material_diffuse + material_specular) / distance2;
+
+	final_color = vec4(material_color , texture_color.a);
 }

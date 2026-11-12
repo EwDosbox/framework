@@ -17,12 +17,8 @@ GLuint load_texture_2d(const std::filesystem::path filename) {
   glTextureStorage2D(texture, (GLsizei)std::log2(width), GL_RGBA8, width,
                      height);
 
-  glTextureSubImage2D(texture,
-                      0,                         //
-                      0, 0,                      //
-                      width, height,             //
-                      GL_RGBA, GL_UNSIGNED_BYTE, //
-                      data);
+  glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGBA,
+                      GL_UNSIGNED_BYTE, data);
 
   stbi_image_free(data);
 

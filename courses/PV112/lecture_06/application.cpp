@@ -19,15 +19,19 @@ GLuint load_texture(std::filesystem::path file) {
   if (width > 0) {
     glCreateTextures(GL_TEXTURE_2D, 1, &texture_id);
 
-    glTextureStorage2D(texture_id,
-                       std::log2(width) + 1, // NUMBER OF MIMPMAP LEVELS
-                       GL_RGBA8,             // SIZED INTERNAL FORMAT
-                       width, height);
+    glTextureStorage2D(texture_id, std::log2(width) + 1, GL_RGBA8, width,
+                       height);
     glTextureSubImage2D(texture_id, 0, 0, 0, width, height, GL_RGBA,
                         GL_UNSIGNED_BYTE, data);
 
     glGenerateTextureMipmap(texture_id);
   }
+
+  glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER,
+                      GL_LINEAR_MIPMAP_LINEAR);
+  glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
   stbi_image_free(data);
   return texture_id;
