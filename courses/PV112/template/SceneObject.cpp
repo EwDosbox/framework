@@ -1,8 +1,4 @@
 #include "SceneObject.hpp"
-#include <cmath>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
 void SceneObject::draw() { int i = 0; }
 

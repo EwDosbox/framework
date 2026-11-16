@@ -1,17 +1,18 @@
 #pragma once
-#define GLFW_INCLUDE_NONE
-#include "glad/glad.h"
-#include <GL/gl.h>
-#include <GLFW/glfw3.h>
-#include <filesystem>
+
+#include "headers.cpp"
+
+using namespace glm;
 
 class SceneObject {
 private:
-  GLuint mesh;
-  GLuint texture;
+  GLuint mesh = -1;
+  GLuint texture = -1;
+  GLuint vbo = -1;
 
 public:
   void draw();
+  bool assign_data(std::filesystem::path path);
 };
 
 GLuint load_texture(std::filesystem::path file);
