@@ -8,4 +8,4 @@
 ################################################################################
 
 # Generates the lecture.
-visitlab_generate_lecture(PV112 project_template)
+visitlab_generate_lecture(PV112 project)

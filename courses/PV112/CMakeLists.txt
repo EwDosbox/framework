@@ -29,4 +29,5 @@ visitlab_add_directory(lecture_08_final)
 
 # Adds the project template.
 visitlab_add_directory(template)
+visitlab_add_directory(project)
 visitlab_add_directory(mipmapExample)
