@@ -5,6 +5,7 @@
 // All rights reserved.
 // ################################################################################
 
+#include "geometry_base.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include "application.hpp"
 #include "stb_image.h"
@@ -68,27 +69,33 @@ Application::Application(int initial_width, int initial_height,
 
   // --------------------------------------------------------------------------
   // Task 7.1: Create Framebuffer
-  // --------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   // Create framebuffers (glCreateFramebuffers)
 
-  // glCreateFramebuffers(1);
+  glCreateFramebuffers(1, &framebuffer);
 
   // Initialize color output texture with GL_RGBA32F format (glCreateTextures,
   // glTextureStorage2D)
 
-  // glCreateTextures()
+  glCreateTextures(GL_TEXTURE_2D, 1, &framebuffer_color);
+  glTextureStorage2D(framebuffer_color, 3, GL_RGBA32F, width, height);
 
   // Initialize depth output texture with GL_DEPTH_COMPONENT32F format
-  // ...
+
+  glCreateTextures(GL_TEXTURE_2D, 1, &framebuffer_depth);
+  glTextureStorage2D(framebuffer_depth, 3, GL_DEPTH_COMPONENT32F, width,
+                     height);
 
   // Set output 0 to GL_COLOR_ATTACHMENT0 (glNamedFramebufferDrawBuffers)
-  const GLenum draw_buffers[] = {GL_COLOR_ATTACHMENT0};
-  // ...
+  const GLenum draw_buffers[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
 
   // Associate color and depth
   // 'attachments'(GL_COLOR_ATTACHMENT0,GL_DEPTH_ATTACHMENT) with
   // (framebuffer_)color and (framebuffer_)depth 'textures'
   // (glNamedFramebufferTexture)
+
+  glNamedFramebufferTexture(framebuffer, 0, framebuffer_color, 3);
+  glNamedFramebufferTexture(framebuffer, 1, framebuffer_depth, 3);
 
   compile_shaders();
 }
@@ -193,23 +200,28 @@ void Application::render() {
   // --------------------------------------------------------------------------
 
   // Bind back the default(0) framebuffer (glBindFramebuffer).
-  // ...
+
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
   // Clear the color buffer.
-  // ...
+
+  glClearNamedFramebufferfv(framebuffer_color, GL_COLOR, 0, clear_color);
 
   // Disable depth test - we do not need it.
-  // ...
+
+  glDisable(GL_DEPTH_TEST);
 
   // Use post-process program.
-  // ...
+
+  glUseProgram(postprocess_program);
 
   // Bind the output from previous program (framebuffer_color) as input texture
   // (binding = 0). to the post-process program
-  // ...
+
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer_color);
 
   // Draw the full-screen triangle.
-  // ...
+  teapot.draw();
 }
 
 void Application::render_ui() { const float unit = ImGui::GetFontSize(); }
