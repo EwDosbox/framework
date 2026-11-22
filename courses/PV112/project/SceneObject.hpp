@@ -1,18 +1,43 @@
 #pragma once
 
+#include "World.hpp"
 #include "headers.cpp"
+#include <glm/fwd.hpp>
 
 using namespace glm;
 
 class SceneObject {
+#pragma region Private
 private:
+  World *world;
+
+  vec3 position = vec3();
+  vec3 rotation = vec3();
+  vec3 scale = vec3();
+
   GLuint mesh = -1;
   GLuint texture = -1;
   GLuint vbo = -1;
+#pragma endregion
+#pragma region Public
 
 public:
+  vec3 GetPosition();
+  vec3 GetRotation();
+  vec3 GetScale();
+
+  bool SetPosition(vec3 newPosition);
+  bool SetPosition(float x, float y, float z);
+
+  bool SetRotation(vec3 newRotation);
+  bool SetRotation(float x, float y, float z);
+
+  bool SetScale(vec3 newScale);
+  bool SetScale(float x, float y, float z);
+
+  SceneObject(World *World);
+
   void draw();
   bool assign_data(std::filesystem::path path);
 };
-
-GLuint load_texture(std::filesystem::path file);
+#pragma endregion

@@ -1,30 +1,43 @@
 #include "SceneObject.hpp"
+#include "Utility.hpp"
+#include <glm/fwd.hpp>
 
-void SceneObject::draw() { int i = 0; }
+vec3 SceneObject::GetPosition() { return this->position; }
 
-GLuint load_texture(std::filesystem::path file) {
-  int width = -1, height = -1, components = -1;
-  unsigned char *data = stbi_load(file.string().c_str(), &width, &height,
-                                  &components, 4 /*RGBA*/);
-  GLuint texture_id = -1;
+vec3 SceneObject::GetRotation() { return this->rotation; }
+vec3 SceneObject::GetScale() { return this->scale; }
 
-  if (width > 0) {
-    glCreateTextures(GL_TEXTURE_2D, 1, &texture_id);
-
-    glTextureStorage2D(texture_id, std::log2(width) + 1, GL_RGBA8, width,
-                       height);
-    glTextureSubImage2D(texture_id, 0, 0, 0, width, height, GL_RGBA,
-                        GL_UNSIGNED_BYTE, data);
-
-    glGenerateTextureMipmap(texture_id);
+bool SceneObject::SetPosition(vec3 newPosition) {
+  if (Utility::is_contained(newPosition, vec3(), this->world->GetBounds())) {
+    this->position = newPosition;
+    return true;
+  } else {
+    return false;
   }
-
-  glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER,
-                      GL_LINEAR_MIPMAP_LINEAR);
-  glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-  stbi_image_free(data);
-  return texture_id;
 }
+bool SceneObject::SetPosition(float x, float y, float z) {
+  return SetPosition(vec3(x, y, z));
+}
+
+bool SceneObject::SetRotation(vec3 newRotation) {
+  this->rotation = newRotation;
+  return true;
+}
+bool SceneObject::SetRotation(float x, float y, float z) {
+  this->rotation = vec3(x, y, z);
+  return true;
+}
+
+bool SceneObject::SetScale(vec3 newScale) {
+  this->scale = newScale;
+  return true;
+}
+bool SceneObject::SetScale(float x, float y, float z) {
+  this->scale = vec3(x, y, z);
+  return true;
+}
+
+SceneObject::SceneObject(World *World) { this->world = World; }
+
+void SceneObject::draw() { return; }
+bool SceneObject::assign_data(std::filesystem::path path) { return true; }
