@@ -96,3 +96,5 @@ desktop.ini
 
 /.cache
 ext/vcpkg
+
+*.blend?
