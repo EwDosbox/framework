@@ -1,6 +1,9 @@
 #include "SceneObject.hpp"
 #include "Utility.hpp"
+#include "geometry.hpp"
+#include <filesystem>
 #include <glm/fwd.hpp>
+#include <memory>
 
 vec3 SceneObject::GetPosition() { return this->position; }
 
@@ -37,7 +40,9 @@ bool SceneObject::SetScale(float x, float y, float z) {
   return true;
 }
 
-SceneObject::SceneObject(World *World) { this->world = World; }
+SceneObject::SceneObject(World *World, std::filesystem::path path_to_mesh)
+    : world(World),
+      mesh_data(make_shared<Geometry>(Geometry::from_file(path_to_mesh))) {}
 
 void SceneObject::draw() { return; }
 bool SceneObject::assign_data(std::filesystem::path path) { return true; }

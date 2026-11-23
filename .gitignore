@@ -2,7 +2,6 @@
 # C / C++ Compilation & Build Artifacts
 # ==========================================
 *.o
-*.obj
 *.so
 *.so.*
 *.a
