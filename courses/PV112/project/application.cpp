@@ -1,34 +1,12 @@
 #include "application.hpp"
+
+#include "SceneObject.hpp"
+
+#include <glm/fwd.hpp>
 #include <memory>
+#include <vector>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
-using std::make_shared;
-
-GLuint load_texture_2d(const std::filesystem::path filename) {
-  int width, height, channels;
-  unsigned char *data = stbi_load(filename.generic_string().data(), &width,
-                                  &height, &channels, 4);
-
-  GLuint texture;
-  glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-
-  glTextureStorage2D(texture, (GLsizei)std::log2(width), GL_RGBA8, width,
-                     height);
-
-  glTextureSubImage2D(texture, 0, 0, 0, width, height, GL_RGBA,
-                      GL_UNSIGNED_BYTE, data);
-
-  stbi_image_free(data);
-
-  glGenerateTextureMipmap(texture);
-
-  glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  return texture;
-}
+using namespace std;
 
 Application::Application(int initial_width, int initial_height,
                          std::vector<std::string> arguments)
@@ -38,161 +16,46 @@ Application::Application(int initial_width, int initial_height,
 
   images_path = lecture_folder_path / "images";
   objects_path = lecture_folder_path / "objects";
+  shaders_path = lecture_folder_path / "shaders";
 
-  // --------------------------------------------------------------------------
-  //  Load/Create Objects
-  // --------------------------------------------------------------------------
-  geometries.push_back(make_shared<Sphere>());
-  // You can use from_file function to load a Geometry from .obj file
-  geometries.push_back(
-      make_shared<Geometry>(Geometry::from_file(objects_path / "bunny.obj")));
-
-  sphere = geometries[0];
-  bunny = geometries[1];
-
-  marble_texture = load_texture_2d(images_path / "bunny.jpg");
-
-  // --------------------------------------------------------------------------
-  // Initialize UBO Data
-  // --------------------------------------------------------------------------
-  camera_ubo.position = glm::vec4(camera.get_eye_position(), 1.0f);
-  camera_ubo.projection = glm::perspective(
-      glm::radians(45.0f), float(width) / float(height), 0.01f, 1000.0f);
-  camera_ubo.view =
-      glm::lookAt(camera.get_eye_position(), glm::vec3(0.0f, 0.0f, 0.0f),
-                  glm::vec3(0.0f, 1.0f, 0.0f));
-
-  light_ubo.position = glm::vec4(0.0f, 3.0f, 2.0f, 1.0f);
-  light_ubo.ambient_color = glm::vec4(1.0f);
-  light_ubo.diffuse_color = glm::vec4(2.0f, 2.0f, 1.0f, 1.0f);
-  light_ubo.specular_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-  objects_ubos.push_back(
-      {.model_matrix = glm::scale(
-           glm::translate(glm::mat4(1.0f), glm::vec3(light_ubo.position)),
-           glm::vec3(0.1f)),
-       .ambient_color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
-       .diffuse_color = glm::vec4(0.0),
-       .specular_color = glm::vec4(0.0f)});
-  objects_ubos.push_back({.model_matrix = glm::mat4(1.0f),
-                          .ambient_color = glm::vec4(0.0f),
-                          .diffuse_color = glm::vec4(1.0f),
-                          .specular_color = glm::vec4(0.0f)});
-
-  // --------------------------------------------------------------------------
-  // Create Buffers
-  // --------------------------------------------------------------------------
-  glCreateBuffers(1, &camera_buffer);
-  glNamedBufferStorage(camera_buffer, sizeof(CameraUBO), &camera_ubo,
-                       GL_DYNAMIC_STORAGE_BIT);
-
-  glCreateBuffers(1, &light_buffer);
-  glNamedBufferStorage(light_buffer, sizeof(LightUBO), &light_ubo,
-                       GL_DYNAMIC_STORAGE_BIT);
-
-  glCreateBuffers(1, &objects_buffer);
-  glNamedBufferStorage(objects_buffer, sizeof(ObjectUBO) * objects_ubos.size(),
-                       objects_ubos.data(), GL_DYNAMIC_STORAGE_BIT);
+  forest = std::make_unique<World>(vec3(20), lecture_folder_path);
+  forest->Initialize();
 
   compile_shaders();
 }
 
-Application::~Application() {
-  delete_shaders();
+Application::~Application() { delete_shaders(); }
 
-  glDeleteBuffers(1, &camera_buffer);
-  glDeleteBuffers(1, &light_buffer);
-  glDeleteBuffers(1, &objects_buffer);
-}
+#pragma region Methods
 
-// ----------------------------------------------------------------------------
-// Methods
-// ----------------------------------------------------------------------------
-
-void Application::delete_shaders() {}
+void Application::delete_shaders() { SceneObject::DeleteShaders(); }
 
 void Application::compile_shaders() {
   delete_shaders();
-  main_program = create_program(lecture_shaders_path / "main.vert",
-                                lecture_shaders_path / "main.frag");
+  SceneObject::InitShaders(shaders_path);
 }
 
-void Application::update(float delta) {}
+void Application::update(float delta) { forest->advance_time(delta); }
 
 void Application::render() {
-  // --------------------------------------------------------------------------
-  // Update UBOs
-  // --------------------------------------------------------------------------
-  // Camera
-  camera_ubo.position = glm::vec4(camera.get_eye_position(), 1.0f);
-  camera_ubo.projection = glm::perspective(
-      glm::radians(45.0f),
-      static_cast<float>(width) / static_cast<float>(height), 0.01f, 1000.0f);
-  camera_ubo.view =
-      glm::lookAt(camera.get_eye_position(), glm::vec3(0.0f, 0.0f, 0.0f),
-                  glm::vec3(0.0f, 1.0f, 0.0f));
-  glNamedBufferSubData(camera_buffer, 0, sizeof(CameraUBO), &camera_ubo);
-
-  // --------------------------------------------------------------------------
-  // Draw scene
-  // --------------------------------------------------------------------------
-  glViewport(0, 0, (GLsizei)width, (GLsizei)height);
-
-  // Clear
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  // Configure fixed function pipeline
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-  // Depth test enabled
   glEnable(GL_DEPTH_TEST);
 
-  // Blending for transparency (not really used here, but you may need it in
-  // your projects)
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+  vec3 light_position = forest->GetLightPosition();
 
-  // Backface culling for performance
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
+  for (auto &object : forest->GetObjects()) {
+    object->draw(light_position);
+  }
 
-  // Draw objects
-  glUseProgram(main_program);
-
-  // First object - sphere
-  glBindBufferBase(GL_UNIFORM_BUFFER, 0, camera_buffer);
-  glBindBufferBase(GL_UNIFORM_BUFFER, 1, light_buffer);
-  // WARNING: The offset in glBindBufferRange must be multiple of
-  // GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT. The alignment is typically 256 bytes,
-  // but it is platform dependent. You can query it using: GLint alignment = 0;
-  // glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &alignment);
-  //
-  // Note that if you decide to change the alignment, you must ensure it will
-  // work on Windows. The alignment must be the same as the alignment of your
-  // ObjectUBO definition (see details in header). If you are not sure, you can
-  // always store objects in separate buffers and use glBindBufferBase.
-  glBindBufferRange(GL_UNIFORM_BUFFER, 2, objects_buffer, 0 * 256,
-                    sizeof(ObjectUBO));
-
-  glUniform1i(glGetUniformLocation(main_program, "has_texture"), false);
-  sphere->draw();
-
-  // Second object - bunny
-  glBindBufferBase(GL_UNIFORM_BUFFER, 0, camera_buffer);
-  glBindBufferBase(GL_UNIFORM_BUFFER, 1, light_buffer);
-  glBindBufferRange(GL_UNIFORM_BUFFER, 2, objects_buffer, 1 * 256,
-                    sizeof(ObjectUBO));
-
-  glUniform1i(glGetUniformLocation(main_program, "has_texture"), true);
-  glBindTextureUnit(3, marble_texture);
-  bunny->draw();
+  for (auto &object : forest->GetInstantiatedObjects()) {
+    object->draw_instantiated(light_position);
+  }
 }
 
 void Application::render_ui() { const float unit = ImGui::GetFontSize(); }
 
-// ----------------------------------------------------------------------------
-// Input Events
-// ----------------------------------------------------------------------------
+#pragma endregion
+#pragma region Input Events
 
 void Application::on_resize(int width, int height) {
   // Calls the default implementation to set the class variables.
@@ -210,3 +73,5 @@ void Application::on_key_pressed(int key, int scancode, int action, int mods) {
   // hit.
   PV112Application::on_key_pressed(key, scancode, action, mods);
 }
+
+#pragma endregion

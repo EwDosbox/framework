@@ -8,4 +8,14 @@
 ################################################################################
 
 # Generates the lecture.
-visitlab_generate_lecture(PV112 project)
+visitlab_generate_lecture(PV112 project
+    EXTRA_FILES
+        PlayerCamera.cpp
+        PlayerCamera.hpp
+        SceneObject.cpp
+        SceneObject.hpp
+        Utility.cpp
+        Utility.hpp
+        World.cpp
+        World.hpp
+)

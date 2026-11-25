@@ -1,5 +1,12 @@
 #pragma once
-#include "headers.cpp"
+
+#include "glad/glad.h"
+#include <GL/gl.h>
+#include <glm/glm.hpp>
+
+#include <filesystem>
+#include <string>
+
 using namespace glm;
 
 class Utility {

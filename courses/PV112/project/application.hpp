@@ -7,87 +7,18 @@
 
 #pragma once
 
-#include "camera.h"
-#include "cube.hpp"
+#include "World.hpp"
 #include "pv112_application.hpp"
-#include "sphere.hpp"
-#include "teapot.hpp"
-
-// ----------------------------------------------------------------------------
-// UNIFORM STRUCTS
-// ----------------------------------------------------------------------------
-struct CameraUBO {
-  glm::mat4 projection;
-  glm::mat4 view;
-  glm::vec4 position;
-};
-
-struct LightUBO {
-  glm::vec4 position;
-  glm::vec4 ambient_color;
-  glm::vec4 diffuse_color;
-  glm::vec4 specular_color;
-};
-
-// The C++ alignas specifier may be applied to type definitions to specify a
-// memory alignment for instances of that type. This is useful for UBOs, where
-// each element must be aligned to 256 bytes (or more precisely to multiple of
-// GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT). This forces the compiler to align
-// elements of std::vector<ObjectUBO> to 256 bytes despite them being smaller.
-// Note that if you decide to change the alignment, you must also change the
-// offset in glBindBufferRange calls and ensure it will work on Windows.
-struct alignas(256) ObjectUBO {
-  glm::mat4 model_matrix;  // [  0 -  64) bytes
-  glm::vec4 ambient_color; // [ 64 -  80) bytes
-  glm::vec4 diffuse_color; // [ 80 -  96) bytes
-  // Contains shininess in .w element
-  glm::vec4 specular_color; // [ 96 - 112) bytes
-};
+#include <memory>
 
 class Application : public PV112Application {
-  // ----------------------------------------------------------------------------
-  // Variables
-  // ----------------------------------------------------------------------------
-
-  // Paths
+private:
   std::filesystem::path images_path;
   std::filesystem::path objects_path;
+  std::filesystem::path shaders_path;
 
-  // Main program
-  GLuint main_program;
-  // TODO: feel free to add as many as you need/like
+  std::unique_ptr<World> forest;
 
-  // List of geometries used in the project
-  std::vector<std::shared_ptr<Geometry>> geometries;
-  // Shared pointers are pointers that automatically count how many times they
-  // are used. When there are 0 pointers to the object pointed by shared_ptrs,
-  // the object is automatically deallocated. Consequently, we gain 3 main
-  // properties:
-  // 1. Objects are not unnecessarily copied
-  // 2. We don't have to track pointers
-  // 3. We don't have to deallocate these geometries
-  std::shared_ptr<Geometry> sphere;
-  std::shared_ptr<Geometry> bunny;
-
-  // Default camera that rotates around center.
-  Camera camera;
-
-  // UBOs for camera, lights, and objects
-  GLuint camera_buffer = 0;
-  CameraUBO camera_ubo;
-
-  GLuint light_buffer = 0;
-  LightUBO light_ubo;
-
-  GLuint objects_buffer = 0;
-  std::vector<ObjectUBO> objects_ubos;
-
-  // Textures
-  GLuint marble_texture = 0;
-
-  // ----------------------------------------------------------------------------
-  // Constructors & Destructors
-  // ----------------------------------------------------------------------------
 public:
   /**
    * Constructs a new @link Application with a custom width and height.

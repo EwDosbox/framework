@@ -1,6 +1,10 @@
 #include "Utility.hpp"
+
 #include <cmath>
 #include <fstream>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 std::string Utility::load_file(std::filesystem::path path) {
 
