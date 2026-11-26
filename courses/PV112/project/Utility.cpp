@@ -6,20 +6,22 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-std::string Utility::load_file(std::filesystem::path path) {
+using namespace glm;
+using namespace std;
 
-  std::ifstream file(path);
+string Utility::load_file(filesystem::path path) {
+  ifstream file(path);
 
-  std::stringstream string_stream;
+  stringstream string_stream;
   string_stream << file.rdbuf();
 
   return string_stream.str();
 }
 
-GLuint Utility::compile_shader(std::filesystem::path path, GLenum type) {
+GLuint Utility::compile_shader(filesystem::path path, GLenum type) {
   GLuint shader = glCreateShader(type);
-  std::string source = load_file(path);
-  // std::cout << source << std::endl;
+  string source = load_file(path);
+  // cout << source << endl;
   const char *source_char = source.data();
   glShaderSource(shader, 1, &source_char, nullptr);
   glCompileShader(shader);
@@ -32,7 +34,7 @@ void Utility::delete_shader(GLuint shader, GLuint program) {
   glDeleteShader(shader);
 }
 
-GLuint Utility::load_texture(std::filesystem::path file) {
+GLuint Utility::load_texture(filesystem::path file) {
   int width = -1, height = -1, components = -1;
   unsigned char *data = stbi_load(file.string().c_str(), &width, &height,
                                   &components, 4 /*RGBA*/);

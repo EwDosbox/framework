@@ -2,6 +2,7 @@
 
 #include "Utility.hpp"
 #include "World.hpp"
+#include <string>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
@@ -18,6 +19,30 @@
 #include <memory>
 
 GLuint SceneObject::shader_program = 0;
+
+#pragma region Private
+mat4 SceneObject::compute_model_matrix() const {
+  mat4 model = translate(mat4(1.0f), position);
+  model = rotate(model, radians(rotation.x), vec3(1.0f, 0.0f, 0.0f));
+  model = rotate(model, radians(rotation.y), vec3(0.0f, 1.0f, 0.0f));
+  model = rotate(model, radians(rotation.z), vec3(0.0f, 0.0f, 1.0f));
+  model = glm::scale(model, scale);
+  return model;
+}
+
+void SceneObject::upload_instance_data() {
+  if (instance_ssbo == 0) {
+    glCreateBuffers(1, &instance_ssbo);
+  }
+  glNamedBufferData(
+      instance_ssbo,
+      static_cast<GLsizeiptr>(instance_models.size() * sizeof(mat4)),
+      instance_models.data(), GL_DYNAMIC_DRAW);
+}
+#pragma endregion
+#pragma region Public
+
+#pragma region Getters and Setters
 
 vec3 SceneObject::GetPosition() { return this->position; }
 vec3 SceneObject::GetRotation() { return this->rotation; }
@@ -57,36 +82,22 @@ void SceneObject::SetMaterial(const Material &new_material) {
 }
 void SceneObject::SetTexture(GLuint texture_id) { this->texture = texture_id; }
 
-mat4 SceneObject::compute_model_matrix() const {
-  mat4 model = translate(mat4(1.0f), position);
-  model = rotate(model, radians(rotation.x), vec3(1.0f, 0.0f, 0.0f));
-  model = rotate(model, radians(rotation.y), vec3(0.0f, 1.0f, 0.0f));
-  model = rotate(model, radians(rotation.z), vec3(0.0f, 0.0f, 1.0f));
-  model = glm::scale(model, scale);
-  return model;
-}
+#pragma endregion
+#pragma region Constructors
 
-void SceneObject::upload_instance_data() {
-  if (instance_ssbo == 0) {
-    glCreateBuffers(1, &instance_ssbo);
-  }
-  glNamedBufferData(
-      instance_ssbo,
-      static_cast<GLsizeiptr>(instance_models.size() * sizeof(mat4)),
-      instance_models.data(), GL_DYNAMIC_DRAW);
-}
-
-SceneObject::SceneObject(World *world, std::filesystem::path path_to_mesh)
-    : world(world),
+SceneObject::SceneObject(World *world, string name,
+                         filesystem::path path_to_mesh)
+    : world(world), name(name),
       mesh_data(make_unique<Geometry>(Geometry::from_file(path_to_mesh))) {
   is_instanced = false;
   instance_models = {compute_model_matrix()};
   upload_instance_data();
 }
 
-SceneObject::SceneObject(World *world, std::filesystem::path path_to_mesh,
+SceneObject::SceneObject(World *world, string name,
+                         filesystem::path path_to_mesh,
                          std::vector<glm::mat4> instances)
-    : world(world),
+    : world(world), name(name),
       mesh_data(make_unique<Geometry>(Geometry::from_file(path_to_mesh))),
       instance_models(std::move(instances)) {
   is_instanced = true;
@@ -95,6 +106,9 @@ SceneObject::SceneObject(World *world, std::filesystem::path path_to_mesh,
   }
   upload_instance_data();
 }
+
+#pragma endregion
+#pragma region Methods
 
 void SceneObject::InitShaders(filesystem::path shaders_path) {
   GLuint vertex_shader =
@@ -161,7 +175,7 @@ void SceneObject::draw_instantiated(const vec3 &light_position) {
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, instance_binding, instance_ssbo);
 
   mesh_data->bind_vao();
-  mesh_data->draw_instanced(static_cast<int>(instance_models.size()));
+  mesh_data->draw_instanced(get_instance_count());
   glBindVertexArray(0);
 }
 
@@ -174,3 +188,5 @@ void SceneObject::add_instance(const mat4 &model) {
 int SceneObject::get_instance_count() const {
   return static_cast<int>(instance_models.size());
 }
+
+#pragma endregion

@@ -9,7 +9,7 @@
 using namespace std;
 
 Application::Application(int initial_width, int initial_height,
-                         std::vector<std::string> arguments)
+                         vector<string> arguments)
     : PV112Application(initial_width, initial_height, arguments) {
   this->width = initial_width;
   this->height = initial_height;
@@ -18,7 +18,7 @@ Application::Application(int initial_width, int initial_height,
   objects_path = lecture_folder_path / "objects";
   shaders_path = lecture_folder_path / "shaders";
 
-  forest = std::make_unique<World>(vec3(20), lecture_folder_path);
+  forest = make_unique<World>(vec3(20), lecture_folder_path);
   forest->Initialize();
 
   compile_shaders();
@@ -43,11 +43,11 @@ void Application::render() {
 
   vec3 light_position = forest->GetLightPosition();
 
-  for (auto &object : forest->GetObjects()) {
+  for (unique_ptr<SceneObject> &object : forest->GetObjects()) {
     object->draw(light_position);
   }
 
-  for (auto &object : forest->GetInstantiatedObjects()) {
+  for (unique_ptr<SceneObject> &object : forest->GetInstantiatedObjects()) {
     object->draw_instantiated(light_position);
   }
 }

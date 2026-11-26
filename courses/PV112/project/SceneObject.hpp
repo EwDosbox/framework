@@ -5,6 +5,7 @@
 
 #include <filesystem>
 #include <memory>
+#include <string>
 
 class World;
 
@@ -13,6 +14,7 @@ class SceneObject {
 private:
   World *world;
   std::unique_ptr<Geometry> mesh_data;
+  std::string name;
 
   glm::vec3 position = vec3();
   glm::vec3 rotation = vec3();
@@ -50,8 +52,10 @@ public:
   void SetMaterial(const Material &new_material);
   void SetTexture(GLuint texture_id);
 
-  SceneObject(World *world, std::filesystem::path path_to_mesh);
-  SceneObject(World *world, std::filesystem::path path_to_mesh,
+  SceneObject(World *world, std::string name,
+              std::filesystem::path path_to_mesh);
+  SceneObject(World *world, std::string name,
+              std::filesystem::path path_to_mesh,
               std::vector<glm::mat4> instances);
 
   static void InitShaders(std::filesystem::path shaders_path);

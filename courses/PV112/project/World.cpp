@@ -30,7 +30,8 @@ void World::Initialize() {
 
   filesystem::path mesh_dir = this->folder_path / "objects";
 
-  auto ground = make_unique<SceneObject>(this, mesh_dir / "plane.obj");
+  auto ground =
+      make_unique<SceneObject>(this, "ground", mesh_dir / "plane.obj");
   ground->SetPosition(bounds.x / 2.0f, 0.0f, bounds.z / 2.0f);
   ground->SetScale(bounds.x, 1.0f, bounds.z);
   Material ground_material;
@@ -39,7 +40,8 @@ void World::Initialize() {
   ground->SetMaterial(ground_material);
   objects.push_back(std::move(ground));
 
-  auto hero_bunny = make_unique<SceneObject>(this, mesh_dir / "bunny.obj");
+  auto hero_bunny =
+      make_unique<SceneObject>(this, "bunny", mesh_dir / "bunny.obj");
   hero_bunny->SetPosition(bounds.x / 2.0f, 0.0f, bounds.z / 2.0f - 3.0f);
   Material hero_material;
   hero_material.diffuse_color = vec3(0.8f, 0.2f, 0.2f);
@@ -56,7 +58,7 @@ void World::Initialize() {
     bunny_crowd_transforms.push_back(model);
   }
   auto bunny_crowd = make_unique<SceneObject>(
-      this, mesh_dir / "bunny.obj", std::move(bunny_crowd_transforms));
+      this, "bunny", mesh_dir / "bunny.obj", std::move(bunny_crowd_transforms));
   Material crowd_material;
   crowd_material.diffuse_color = vec3(0.6f, 0.6f, 0.2f);
   bunny_crowd->SetMaterial(crowd_material);
