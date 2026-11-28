@@ -2,6 +2,7 @@
 
 #include "Utility.hpp"
 #include "World.hpp"
+#include <string>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
@@ -187,4 +188,5 @@ int SceneObject::GetInstanceCount() const {
   return static_cast<int>(pInstanceModels.size());
 }
 
+#pragma endregion
 #pragma endregion

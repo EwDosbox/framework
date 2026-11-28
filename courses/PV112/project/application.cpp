@@ -9,7 +9,7 @@
 using namespace std;
 
 Application::Application(int initial_width, int initial_height,
-                         std::vector<std::string> arguments)
+                         vector<string> arguments)
     : PV112Application(initial_width, initial_height, arguments) {
   this->width = initial_width;
   this->height = initial_height;
@@ -18,7 +18,7 @@ Application::Application(int initial_width, int initial_height,
   objects_path = lecture_folder_path / "objects";
   shaders_path = lecture_folder_path / "shaders";
 
-  forest = std::make_unique<World>(vec3(20), lecture_folder_path);
+  forest = make_unique<World>(vec3(20), lecture_folder_path);
   forest->Initialize();
 
   compile_shaders();
@@ -43,35 +43,38 @@ void Application::render() {
 
   vec3 light_position = forest->GetLightPosition();
 
-  for (auto &object : forest->GetObjects()) {
+  for (unique_ptr<SceneObject> &object : forest->GetObjects()) {
     object->Draw(light_position);
   }
 
-  for (auto &object : forest->GetInstantiatedObjects()) {
-    object->DrawInstances(light_position);
+  for (unique_ptr<SceneObject> &object : forest->GetInstantiatedObjects()) {
+    object->draw_instantiated(light_position);
+    for (auto &object : forest->GetInstantiatedObjects()) {
+      object->DrawInstances(light_position);
+    }
   }
-}
 
-void Application::render_ui() { const float unit = ImGui::GetFontSize(); }
+  void Application::render_ui() { const float unit = ImGui::GetFontSize(); }
 
 #pragma endregion
 #pragma region Input Events
 
-void Application::on_resize(int width, int height) {
-  // Calls the default implementation to set the class variables.
-  PV112Application::on_resize(width, height);
-}
+  void Application::on_resize(int width, int height) {
+    // Calls the default implementation to set the class variables.
+    PV112Application::on_resize(width, height);
+  }
 
-void Application::on_mouse_move(double x, double y) {
-  camera.on_mouse_move(x, y);
-}
-void Application::on_mouse_button(int button, int action, int mods) {
-  camera.on_mouse_button(button, action, mods);
-}
-void Application::on_key_pressed(int key, int scancode, int action, int mods) {
-  // Calls default implementation that invokes compile_shaders when 'R key is
-  // hit.
-  PV112Application::on_key_pressed(key, scancode, action, mods);
-}
+  void Application::on_mouse_move(double x, double y) {
+    camera.on_mouse_move(x, y);
+  }
+  void Application::on_mouse_button(int button, int action, int mods) {
+    camera.on_mouse_button(button, action, mods);
+  }
+  void Application::on_key_pressed(int key, int scancode, int action,
+                                   int mods) {
+    // Calls default implementation that invokes compile_shaders when 'R key is
+    // hit.
+    PV112Application::on_key_pressed(key, scancode, action, mods);
+  }
 
 #pragma endregion
