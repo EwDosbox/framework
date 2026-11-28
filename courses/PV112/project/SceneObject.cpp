@@ -106,7 +106,6 @@ void SceneObject::SetMaterial(const Material &new_material) {
 }
 void SceneObject::SetTexture(GLuint texture_id) { this->texture = texture_id; }
 
-#pragma endregion
 #pragma region Methods
 
 void SceneObject::InitShaders(filesystem::path shaders_path) {
@@ -188,5 +187,4 @@ int SceneObject::GetInstanceCount() const {
   return static_cast<int>(pInstanceModels.size());
 }
 
-#pragma endregion
 #pragma endregion

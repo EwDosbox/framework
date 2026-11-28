@@ -54,10 +54,8 @@ public:
   void SetMaterial(const Material &new_material);
   void SetTexture(GLuint texture_id);
 
-  SceneObject(World *world, std::string name,
-              std::filesystem::path path_to_mesh);
-  SceneObject(World *world, std::string name,
-              std::filesystem::path path_to_mesh,
+  SceneObject(World *world, std::filesystem::path path_to_mesh);
+  SceneObject(World *world, std::filesystem::path path_to_mesh,
               std::vector<glm::mat4> instances);
 
   static void InitShaders(std::filesystem::path shaders_path);
