@@ -3,16 +3,19 @@
 #include "geometry.hpp"
 #include "structs.hpp"
 
+#include <glm/glm.hpp>
+
 #include <filesystem>
 #include <memory>
+#include <vector>
 
 class World;
 
 class SceneObject {
 #pragma region Private
 private:
-  World *world;
-  std::unique_ptr<Geometry> mesh_data;
+  World *pWorld;
+  std::unique_ptr<Geometry> pMeshData;
 
   glm::vec3 position = vec3();
   glm::vec3 rotation = vec3();
@@ -21,16 +24,16 @@ private:
   Material material;
   GLuint texture = 0;
 
-  bool is_instanced = false;
+  bool isInstanced = false;
 
-  std::vector<glm::mat4> instance_models;
-  GLuint instance_ssbo = 0;
-  static const GLuint instance_binding = 1;
+  std::vector<glm::mat4> pInstanceModels;
+  GLuint SSBO = 0;
+  static constexpr GLuint instanceBinding = 1;
 
-  static GLuint shader_program;
+  static GLuint shaderProgram;
 
-  glm::mat4 compute_model_matrix() const;
-  void upload_instance_data();
+  glm::mat4 ComputeModelMatrix() const;
+  void UploadInstanceData();
 #pragma endregion
 #pragma region Public
 public:
@@ -57,10 +60,10 @@ public:
   static void InitShaders(std::filesystem::path shaders_path);
   static void DeleteShaders();
 
-  void draw(const glm::vec3 &light_position);
-  void draw_instantiated(const glm::vec3 &light_position);
+  void Draw(const glm::vec3 &light_position);
+  void DrawInstances(const glm::vec3 &light_position);
 
-  void add_instance(const glm::mat4 &model);
-  int get_instance_count() const;
+  void AddInstance(const glm::mat4 &model);
+  int GetInstanceCount() const;
 };
 #pragma endregion

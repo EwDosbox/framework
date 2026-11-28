@@ -44,11 +44,11 @@ void Application::render() {
   vec3 light_position = forest->GetLightPosition();
 
   for (auto &object : forest->GetObjects()) {
-    object->draw(light_position);
+    object->Draw(light_position);
   }
 
   for (auto &object : forest->GetInstantiatedObjects()) {
-    object->draw_instantiated(light_position);
+    object->DrawInstances(light_position);
   }
 }
 
